@@ -58,7 +58,6 @@ function of if the site was burned or not (x axis should be ndmi)
 You should exclude winter months and focus on summer months
 
 
-pivot longer instead of gather for bonus question
 ```{r}
 full_wide=full_long%>%
   spread(data, value)%>%
@@ -73,6 +72,8 @@ ggplot(full_wide_xwinter, aes(x=ndmi, y=ndvi, color=site))+
   geom_point()
 
 ```
+
+
 
 
 ## Question 2 
@@ -113,11 +114,11 @@ cor(combined$mean_ndsi, combined$mean_ndvi)
 
 #correlation plot
 ggplot(combined, aes(x=mean_ndsi, y=mean_ndvi, color=year, shape=site))+
-  geom_point()
+  geom_point(size=2)
 
 ```
 
-
+There is minimal correlation between the previous years snowfall and vegetation growth. The correlation coefficient is 0.18, meaning that the positive correlation is close to 0 or nearly no linear relationship.
 
 ## Q3
 
@@ -125,9 +126,113 @@ How is the snow effect from question 2 different between pre- and post-burn
 and burned and unburned? 
 
 ```{r}
+#pre and post burn
+preburn<-c(1984:2001)
+postburn<-c(2003:2019)
+
+#preburn
+#preburn annual ndsi
+preburn_annualndsi<-full_wide[c(1,2,4)] %>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(1,2,3,4))%>% 
+  filter(year %in% preburn)%>%
+  group_by(site, year)%>%
+  summarize(mean_preburnndsi=mean(ndsi))
+
+#preburn annual ndvi
+preburn_annualndvi<-full_wide[c(1,2,5)] %>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(6,7,8))%>% 
+  filter(year %in% preburn)%>%
+  group_by(site, year)%>%
+  summarize(mean_preburnndvi=mean(ndvi))
+
+#combine pre burn
+combinepre<-inner_join(preburn_annualndsi,preburn_annualndvi)
+
+#correlation pre burn
+cor(combinepre$mean_preburnndsi, combinepre$mean_preburnndvi)
 
 
+#postburn
+#postburn annual ndsi
+postburn_annualndsi<-full_wide[c(1,2,4)] %>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(1,2,3,4))%>% 
+  filter(year %in% postburn)%>%
+  group_by(site, year)%>%
+  summarize(mean_postburnndsi=mean(ndsi))
 
+#postburn annual ndvi
+postburn_annualndvi<-full_wide[c(1,2,5)] %>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(6,7,8))%>% 
+  filter(year %in% postburn)%>%
+  group_by(site, year)%>%
+  summarize(mean_postburnndvi=mean(ndvi))
+
+#combine post burn
+combinepost<-inner_join(postburn_annualndsi,postburn_annualndvi)
+
+#correlation post burn
+cor(combinepost$mean_postburnndsi, combinepost$mean_postburnndvi)
+
+
+#burned and unburned correlation
+#burned
+#burned annual ndsi
+burned_annualndsi<-full_wide[c(1,2,4)] %>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(1,2,3,4))%>% 
+  filter(site %in% "burned")%>%
+  group_by(site, year)%>%
+  summarize(mean_burnndsi=mean(ndsi))
+
+#burned annual ndvi
+burned_annualndvi<-full_wide[c(1,2,5)] %>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(6,7,8))%>% 
+  filter(site %in% "burned")%>%
+  group_by(site, year)%>%
+  summarize(mean_burnndvi=mean(ndvi))
+
+#combine burned
+combineburned<-inner_join(burned_annualndsi,burned_annualndvi)
+
+#correlation unburned
+cor(combineburned$mean_burnndsi, combineburned$mean_burnndvi)
+
+
+#unburned
+#unburned annual ndsi
+unburned_annualndsi<-full_wide[c(1,2,4)] %>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(1,2,3,4))%>% 
+  filter(site %in% "unburned")%>%
+  group_by(site, year)%>%
+  summarize(mean_unburnndsi=mean(ndsi))
+
+#unburned annual ndvbi
+unburned_annualndvi<-full_wide[c(1,2,5)] %>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(6,7,8))%>% 
+  filter(site %in% "unburned")%>%
+  group_by(site, year)%>%
+  summarize(mean_unburnndvi=mean(ndvi))
+
+#combine unburned
+combineunburned<-inner_join(unburned_annualndsi,unburned_annualndvi)
+
+#correlation unburned
+cor(combineunburned$mean_unburnndsi, combineunburned$mean_unburnndvi)
 
 ```
 
