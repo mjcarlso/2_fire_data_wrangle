@@ -61,11 +61,13 @@ You should exclude winter months and focus on summer months
 pivot longer instead of gather for bonus question
 ```{r}
 full_wide=full_long%>%
-  spread(data, value)
+  spread(data, value)%>%
+  filter_if(is.numeric,all_vars(!is.na(.)))
 
 full_wide_xwinter<-full_wide%>%
   mutate(month=month(DateTime))%>%
   filter(month %in% c(5, 6, 7, 8, 9))
+  
 
 ggplot(full_wide_xwinter, aes(x=ndmi, y=ndvi, color=site))+
   geom_point()
@@ -107,7 +109,11 @@ ndvi_annual<-ndvi_summer%>%
 combined<-inner_join(ndvi_annual,ndsi_annual)
 
 #correlation
-cor
+cor(combined$mean_ndsi, combined$mean_ndvi)
+
+#correlation plot
+ggplot(combined, aes(x=mean_ndsi, y=mean_ndvi, color=year, shape=site))+
+  geom_point()
 
 ```
 
