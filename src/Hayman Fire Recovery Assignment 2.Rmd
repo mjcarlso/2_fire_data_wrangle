@@ -80,6 +80,36 @@ ggplot(full_wide_xwinter, aes(x=ndmi, y=ndvi, color=site))+
 In other words, does the previous year's snow cover influence vegetation
  growth for the following summer?
 
+```{r}
+#ndsi winter data frame
+ndsi_winter<-full_wide%>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(1,2,3,4))%>%
+  subset(., select= -c(ndvi,ndmi))
+#annual ndsi winter
+ndsi_annual<-ndsi_winter%>%
+  group_by(site, year)%>%
+  summarize(mean_ndsi=mean(ndsi))
+
+#ndvi summer data frame
+ndvi_summer<-full_wide%>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  filter(month %in% c(6,7,8))%>%
+  subset(., select = -c(ndsi,ndmi))
+#annual ndvi summer
+ndvi_annual<-ndvi_summer%>%
+  group_by(site, year)%>%
+  summarize(mean_ndvi=mean(ndvi))
+
+#combine data frames
+combined<-inner_join(ndvi_annual,ndsi_annual)
+
+#correlation
+cor
+
+```
 
 
 
@@ -88,10 +118,23 @@ In other words, does the previous year's snow cover influence vegetation
 How is the snow effect from question 2 different between pre- and post-burn
 and burned and unburned? 
 
+```{r}
+
+
+
+
+```
+
+
+
 
 ## Question 4
 
 What month is the greenest month on average? 
+
+```{r}
+
+```
 
 
 
@@ -99,6 +142,12 @@ What month is the greenest month on average?
 ## Question 5) 
 
 What month is the snowiest on average?
+
+```{r}
+
+```
+
+
 
 
 ## Bonus Question: Redo all problems with `spread` and `gather` using modern tidyverse syntax. 
