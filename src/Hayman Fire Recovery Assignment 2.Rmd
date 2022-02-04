@@ -84,7 +84,7 @@ There is a strong positive correlation between NDVI and NDMI for both burned and
 In other words, does the previous year's snow cover influence vegetation
  growth for the following summer?
 
-```{r}
+```{r, warning=F, message=F}
 #ndsi winter data frame
 ndsi_annual<-full_wide%>%
   mutate(month=month(DateTime))%>%
@@ -117,12 +117,13 @@ ggplot(combined, aes(x=mean_ndsi, y=mean_ndvi, color=year, shape=site))+
 
 There is minimal correlation between the previous years snowfall and vegetation growth. The correlation coefficient is 0.18, meaning that the positive correlation is close to 0 or nearly no linear relationship.
 
+
 ## Q3
 
 How is the snow effect from question 2 different between pre- and post-burn
 and burned and unburned? 
 
-```{r}
+```{r, warning=F, message=F}
 #pre and post burn
 preburn<-c(1984:2001)
 postburn<-c(2003:2019)
@@ -150,7 +151,7 @@ preburn_annualndvi<-full_wide[c(1,2,5)] %>%
 combinepre<-inner_join(preburn_annualndsi,preburn_annualndvi)
 
 #correlation pre burn
-cor(combinepre$mean_preburnndsi, combinepre$mean_preburnndvi)
+cor_preburn<-cor(combinepre$mean_preburnndsi, combinepre$mean_preburnndvi)
 
 #plot combine pre burn
 p1<-ggplot(combinepre, aes(x=mean_preburnndsi, y=mean_preburnndvi, color=site))+
@@ -158,7 +159,6 @@ p1<-ggplot(combinepre, aes(x=mean_preburnndsi, y=mean_preburnndvi, color=site))+
   labs(title="Preburn",
        x="Mean preburn NDSI",
        y= "Mean preburn NDVI")
-p1
 
 #postburn
 #postburn annual ndsi
@@ -183,7 +183,7 @@ postburn_annualndvi<-full_wide[c(1,2,5)] %>%
 combinepost<-inner_join(postburn_annualndsi,postburn_annualndvi)
 
 #correlation post burn
-cor(combinepost$mean_postburnndsi, combinepost$mean_postburnndvi)
+cor_postburn<-cor(combinepost$mean_postburnndsi, combinepost$mean_postburnndvi)
 
 #plot combine post burn
 p2<-ggplot(combinepost, aes(x=mean_postburnndsi, y=mean_postburnndvi, color=site))+
@@ -216,7 +216,7 @@ burned_annualndvi<-full_wide[c(1,2,5)] %>%
 combineburned<-inner_join(burned_annualndsi,burned_annualndvi)
 
 #correlation burned
-cor(combineburned$mean_burnndsi, combineburned$mean_burnndvi)
+cor_burned<-cor(combineburned$mean_burnndsi, combineburned$mean_burnndvi)
 
 #plot combine burn
 p3<-ggplot(combineburned, aes(x=mean_burnndsi, y=mean_burnndvi))+
@@ -248,7 +248,7 @@ unburned_annualndvi<-full_wide[c(1,2,5)] %>%
 combineunburned<-inner_join(unburned_annualndsi,unburned_annualndvi)
 
 #correlation unburned
-cor(combineunburned$mean_unburnndsi, combineunburned$mean_unburnndvi)
+cor_unburned<-cor(combineunburned$mean_unburnndsi, combineunburned$mean_unburnndvi)
 
 #plot combine unburn
 p4<-ggplot(combineunburned, aes(x=mean_unburnndsi, y=mean_unburnndvi))+
@@ -259,16 +259,20 @@ p4<-ggplot(combineunburned, aes(x=mean_unburnndsi, y=mean_unburnndvi))+
 
 grid.arrange(p1, p2, p3, p4)
 
+cor_preburn
+cor_postburn
+cor_burned
+cor_unburned
 ```
 
-
+There is no correlation between snow and vegetation for preburn, burned and unburned sites. There is a slight positive linear correlation between snow and vegetation for postburn sites with a value of 0.24.
 
 
 ## Question 4
 
 What month is the greenest month on average? 
 
-```{r}
+```{r, warning=F, message=F}
 ndvi_month<-full_wide[c(1,2,5)]%>%
   mutate(month=month(DateTime))%>%
   mutate(year=year(DateTime))%>%
@@ -297,7 +301,7 @@ The greenest month on average is August. The greenest month for burned sites is 
 
 What month is the snowiest on average?
 
-```{r}
+```{r, warning=F, message=FALSE}
 ndsi_month<-full_wide[c(1,2,4)]%>%
   mutate(month=month(DateTime))%>%
   mutate(year=year(DateTime))%>%
