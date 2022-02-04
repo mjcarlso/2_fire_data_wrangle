@@ -319,7 +319,7 @@ ggplot(ndsi_month2, aes(x=month, y=mean_ndsi, color=site))+
 
 ```
 
-
+The snowiest month on average is January. There is minimal difference in the NDSI between the burned and unburned sites, however, the unburned does have February as the snowiest month.
 
 
 ## Bonus Question: Redo all problems with `spread` and `gather` using modern tidyverse syntax. 
