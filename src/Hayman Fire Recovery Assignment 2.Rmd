@@ -269,12 +269,28 @@ grid.arrange(p1, p2, p3, p4)
 What month is the greenest month on average? 
 
 ```{r}
+ndvi_month<-full_wide[c(1,2,5)]%>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  group_by(month)%>%
+  summarize(mean_ndvi=mean(ndvi))
 
+ggplot(ndvi_month, aes(x=month, y=mean_ndvi, color=month))+
+  geom_point(size=3)+
+  geom_line()
 
+ndvi_month2<-full_wide[c(1,2,5)]%>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  group_by(site,month)%>%
+  summarize(mean_ndvi=mean(ndvi))
+
+ggplot(ndvi_month2, aes(x=month, y=mean_ndvi, color=site))+
+  geom_point()
 
 ```
 
-
+The greenest month on average is August. The greenest month for burned sites is also August but the greenest month for unburned sights is September.
 
 
 ## Question 5) 
@@ -282,6 +298,24 @@ What month is the greenest month on average?
 What month is the snowiest on average?
 
 ```{r}
+ndsi_month<-full_wide[c(1,2,4)]%>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  group_by(month)%>%
+  summarize(mean_ndsi=mean(ndsi))
+
+ggplot(ndsi_month, aes(x=month, y=mean_ndsi, color=month))+
+  geom_point(size=3)+
+  geom_line()
+
+ndsi_month2<-full_wide[c(1,2,4)]%>%
+  mutate(month=month(DateTime))%>%
+  mutate(year=year(DateTime))%>%
+  group_by(site, month)%>%
+  summarize(mean_ndsi=mean(ndsi))
+
+ggplot(ndsi_month2, aes(x=month, y=mean_ndsi, color=site))+
+  geom_point()
 
 ```
 
