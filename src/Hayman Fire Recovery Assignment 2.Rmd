@@ -10,6 +10,7 @@ library(tidyverse)
 library(tidyr)
 library(ggthemes)
 library(lubridate)
+library(gridExtra)
 
 # Now that we have learned how to munge (manipulate) data
 # and plot it, we will work on using these skills in new ways
@@ -73,7 +74,7 @@ ggplot(full_wide_xwinter, aes(x=ndmi, y=ndvi, color=site))+
 
 ```
 
-
+There is a strong positive correlation between NDVI and NDMI for both burned and unburned sites. The burned sights generally have a lower NDVI which is to be expected due to the reduced amount of vegetation as a result of the burn.
 
 
 ## Question 2 
@@ -85,24 +86,20 @@ In other words, does the previous year's snow cover influence vegetation
 
 ```{r}
 #ndsi winter data frame
-ndsi_winter<-full_wide%>%
+ndsi_annual<-full_wide%>%
   mutate(month=month(DateTime))%>%
   mutate(year=year(DateTime))%>%
   filter(month %in% c(1,2,3,4))%>%
-  subset(., select= -c(ndvi,ndmi))
-#annual ndsi winter
-ndsi_annual<-ndsi_winter%>%
+  subset(., select= -c(ndvi,ndmi))%>%
   group_by(site, year)%>%
   summarize(mean_ndsi=mean(ndsi))
 
 #ndvi summer data frame
-ndvi_summer<-full_wide%>%
+ndvi_annual<-full_wide%>%
   mutate(month=month(DateTime))%>%
   mutate(year=year(DateTime))%>%
   filter(month %in% c(6,7,8))%>%
-  subset(., select = -c(ndsi,ndmi))
-#annual ndvi summer
-ndvi_annual<-ndvi_summer%>%
+  subset(., select = -c(ndsi,ndmi))%>%
   group_by(site, year)%>%
   summarize(mean_ndvi=mean(ndvi))
 
@@ -155,6 +152,13 @@ combinepre<-inner_join(preburn_annualndsi,preburn_annualndvi)
 #correlation pre burn
 cor(combinepre$mean_preburnndsi, combinepre$mean_preburnndvi)
 
+#plot combine pre burn
+p1<-ggplot(combinepre, aes(x=mean_preburnndsi, y=mean_preburnndvi, color=site))+
+  geom_point(size=2)+
+  labs(title="Preburn",
+       x="Mean preburn NDSI",
+       y= "Mean preburn NDVI")
+p1
 
 #postburn
 #postburn annual ndsi
@@ -181,6 +185,12 @@ combinepost<-inner_join(postburn_annualndsi,postburn_annualndvi)
 #correlation post burn
 cor(combinepost$mean_postburnndsi, combinepost$mean_postburnndvi)
 
+#plot combine post burn
+p2<-ggplot(combinepost, aes(x=mean_postburnndsi, y=mean_postburnndvi, color=site))+
+  geom_point(size=2)+
+   labs(title="Postburn",
+       x="Mean postburn NDSI",
+       y= "Mean postburn NDVI")
 
 #burned and unburned correlation
 #burned
@@ -205,9 +215,15 @@ burned_annualndvi<-full_wide[c(1,2,5)] %>%
 #combine burned
 combineburned<-inner_join(burned_annualndsi,burned_annualndvi)
 
-#correlation unburned
+#correlation burned
 cor(combineburned$mean_burnndsi, combineburned$mean_burnndvi)
 
+#plot combine burn
+p3<-ggplot(combineburned, aes(x=mean_burnndsi, y=mean_burnndvi))+
+  geom_point(size=2)+
+   labs(title="Burned",
+       x="Mean burned NDSI",
+       y= "Mean burned NDVI")
 
 #unburned
 #unburned annual ndsi
@@ -234,6 +250,15 @@ combineunburned<-inner_join(unburned_annualndsi,unburned_annualndvi)
 #correlation unburned
 cor(combineunburned$mean_unburnndsi, combineunburned$mean_unburnndvi)
 
+#plot combine unburn
+p4<-ggplot(combineunburned, aes(x=mean_unburnndsi, y=mean_unburnndvi))+
+  geom_point(size=2)+
+   labs(title="Unburned",
+       x="Mean unbured NDSI",
+       y= "Mean unburned NDVI")
+
+grid.arrange(p1, p2, p3, p4)
+
 ```
 
 
@@ -244,6 +269,8 @@ cor(combineunburned$mean_unburnndsi, combineunburned$mean_unburnndvi)
 What month is the greenest month on average? 
 
 ```{r}
+
+
 
 ```
 
