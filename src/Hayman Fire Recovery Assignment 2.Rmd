@@ -1,8 +1,16 @@
 ---
 title: "Hayman Fire Recovery"
 author: "MJ Carlson"
-date: "2/3/2022"
+date: "`r format(Sys.time(), '%B %d, %Y')`"
 output: html_document
+
+knit: (function(input, ...) {
+    rmarkdown::render(
+      input,
+      output_file = 'index',
+      output_dir='../'
+    )
+  })
 ---
 
 ```{r setup, warning=F,message=F}
